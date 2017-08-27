@@ -1,11 +1,13 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
+import Book from './Book'
 
 
 class ListBooks extends Component {
     static propTypes = {
-        books: PropTypes.array.isRequired
+        books: PropTypes.array.isRequired,
+        updateBookShelf: PropTypes.func.isRequired
     }
 
     render() {
@@ -17,10 +19,14 @@ class ListBooks extends Component {
         console.log(books);
         //book shelves
         return (
-            <div className="list-books">
+            <div>
                 <div className="list-books-title">
                     <h1>MyReads</h1>
                 </div>
+                <Link
+                    to='/search'
+                    className='open-search'
+                >Search to Add Books</Link>
                 <div className="list-books-content">
                     <div>
                         <div className="bookshelf">
@@ -30,42 +36,27 @@ class ListBooks extends Component {
                                 <ol className="books-grid">
                                     {currentlyReading.map((book) => (
                                         <li key={book.id} >
-                                            <div className="book">
-                                                <div className="book-top">
-                                                    <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: `url(${book.imageLinks.thumbnail})` }}></div>
-
-                                                </div>
-                                            </div>
+                                            <Book book={book} updateBookShelf={this.props.updateBookShelf} />
                                         </li>
                                     ))}
                                 </ol>
                             </div>
                             <h2 className="bookshelf-title">Want to Read</h2>
                             <div className="bookshelf-books">
-                            <ol className="books-grid">
+                                <ol className="books-grid">
                                     {wantToRead.map((book) => (
                                         <li key={book.id} >
-                                            <div className="book">
-                                                <div className="book-top">
-                                                    <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: `url(${book.imageLinks.thumbnail})` }}></div>
-
-                                                </div>
-                                            </div>
+                                            <Book book={book} updateBookShelf={this.props.updateBookShelf} />
                                         </li>
                                     ))}
                                 </ol>
                             </div>
                             <h2 className="bookshelf-title">Read</h2>
                             <div className="bookshelf-books">
-                            <ol className="books-grid">
+                                <ol className="books-grid">
                                     {read.map((book) => (
                                         <li key={book.id} >
-                                            <div className="book">
-                                                <div className="book-top">
-                                                    <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: `url(${book.imageLinks.thumbnail})` }}></div>
-
-                                                </div>
-                                            </div>
+                                            <Book book={book} updateBookShelf={this.props.updateBookShelf} />
                                         </li>
                                     ))}
                                 </ol>

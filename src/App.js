@@ -4,38 +4,83 @@ import { Route, BrowserRouter } from 'react-router-dom'
 import * as BooksAPI from './BooksAPI'
 import './App.css'
 import ListBooks from './ListBooks'
+import Search from './Search'
 
 class BooksApp extends React.Component {
-  state = {
+  state= {
     /**
      * TODO: Instead of using this state variable to keep track of which page
      * we're on, use the URL in the browser's address bar. This will ensure that
      * users can use the browser's back and forward buttons to navigate between
      * pages, as well as provide a good URL they can bookmark and share.
      */
-    books: []
+    books: [],
+    searchResults: []
   }
 
   componentDidMount() {
+    this.getShelfBooks();
+  }
+
+  getShelfBooks() {
     BooksAPI.getAll().then((books) => {
       this.setState({ books })
     })
   }
 
   //Call to move books between shelves
+  updateBookShelf= (book, shelf) => {
+    BooksAPI.update(book, shelf).then(() => {
+      this.getShelfBooks();
+    }
+    )
+  }
+
+  searchBooks= (query, maxResults) => {
+
+    // API does not like empty query (returns 403) so avoid the call
+    if(!query){
+      this.setState({
+        searchResults: []
+      });
+      return;
+    }
+
+    BooksAPI.search(query, maxResults).then((searchResults) => {
+
+      // If there is an error, the response looks like: { error: 'msg', items: []}
+      // if no errors, the response is an array of books
+      let error = !searchResults || searchResults.error;
+      let items = error || !searchResults.length ? [] : searchResults;
+
+      this.setState(
+        {
+          searchResults: items
+        }
+      )
+    })
+  }
 
   //Call to search
 
   render() {
     return (
       <div>
-        <BrowserRouter>
-        <Route exact path='/' render={() => (
-          <ListBooks
-            books={this.state.books}
-          />
-        )} />
-        </BrowserRouter>
+
+          <Route exact path='/' render={() => (
+            <ListBooks
+              books={this.state.books}
+              updateBookShelf={this.updateBookShelf}
+            />
+          )} />
+          <Route path='/search' render={() => (
+            <Search
+              searchBooks= {this.searchBooks}
+              searchResults= {this.state.searchResults}
+              updateBookShelf= {this.updateBookShelf}
+            />
+          )} />
+    
       </div>
     )
   }

@@ -1,4 +1,4 @@
-My Reads
+## My Reads
 To run the project navigate to the project directory and run: npm install
 Once the dependencies have been installed, launch the app with: npm start
 
